@@ -1,5 +1,5 @@
 from collections import defaultdict, deque
-import functions.graph_model as gm
+import graph_model as gm
 
 
 class Graph:
@@ -8,7 +8,18 @@ class Graph:
         self.__input = json
         self.__graph = {}
         self.adj_mtx = []
-
+    # Retorna as informações de um grafo específico
+    def graph_specific_return(self, parms):
+        json_file = gm.JsonToDict(self.__input)
+        self.__graph = json_file.json_to_graph()["graphs"]
+        id = self.__graph[parms]["id"]
+        vertices = self.__graph[parms]["vertices"]
+        edges = self.__graph[parms]["edges"]
+        return id, vertices, edges
+    def graph_all_return(self):
+        json_file = gm.JsonToDict(self.__input)
+        self.__graph = json_file.json_to_graph()["graphs"]
+        return self.__graph
     def graph_check(self):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
@@ -96,12 +107,7 @@ class Graph:
                 return True
         return False
 
-    def graus_vertices(self):
-        json_file = gm.JsonToDict(self.__input)
-        self.__graph = json_file.json_to_graph()["graphs"]
-        degrees = self.__graph[0]["vertices"]
-        edges = self.__graph[0]["edges"]
-
+    def degrees_vertices(self, vertices, edges):
         edge_dict = {}
         graus = {}
 
@@ -113,7 +119,7 @@ class Graph:
                 edge_dict[edge_tuple] = 1
         # print(edge_dict)
 
-        for ver in degrees:
+        for ver in vertices:
             graus[ver] = 0
 
         for i in edge_dict.items():
@@ -123,11 +129,10 @@ class Graph:
                     graus[j] += 1
         return graus
 
-    def degree_vertice_input(self, degree):
+    def degree_vertice_input(self, graph, vertice):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
-        degrees = self.__graph[0]["vertices"]
-        edges = self.__graph[0]["edges"]
+        edges = self.__graph[graph]["edges"]
 
         edge_dict = {}
         grau = {}
@@ -138,7 +143,7 @@ class Graph:
             else:
                 edge_dict[edge_tuple] = 1
 
-        grau[degree] = 0
+        grau[vertice] = 0
 
         for i in edge_dict.items():
             # print(i[0][0], i[0][1], i[1])
@@ -148,10 +153,9 @@ class Graph:
 
         return grau
 
-    def reachable_vertices_of_A(self, idgraph, degree):
+    def reachable_vertices_of_input(self, idgraph, vertice):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
-        degrees = self.__graph[idgraph]["vertices"]
         edges = self.__graph[idgraph]["edges"]
 
         edge_dict = {}
@@ -170,7 +174,7 @@ class Graph:
             if i[0][0] in vertex_list or i[0][1] in vertex_list:
                 pass
 
-            elif i[0][0] != degree and i[1] == 1:
+            elif i[0][0] != vertice and i[1] == 1:
                 if i[0][0] in vertex_list:
                     vertex_list.append(i[0][1])
 
@@ -178,7 +182,7 @@ class Graph:
                 vertex_list.append(i[0][1])
         return vertex_list
 
-    def vertices_unreachable_of_A(self, idgraph, degree):
+    def vertices_unreachable_of_input(self, idgraph, degree):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
         degrees = self.__graph[idgraph]["vertices"]
@@ -205,11 +209,11 @@ class Graph:
 
         return vertex_list
 
-    def bfs_graph(self, initial, final):
+    def bfs_graph(self, idgraph, initial, final):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
-        degrees = self.__graph[10]["vertices"]
-        edges = self.__graph[10]["edges"]
+        vertices = self.__graph[idgraph]["vertices"]
+        edges = self.__graph[idgraph]["edges"]
         # Lista para verificar os grafos adicionados
         dici_edges = defaultdict(list)
         for i in edges:
@@ -217,7 +221,7 @@ class Graph:
         #print("Edges_dici: ", dici_edges)
         
         visited = {}
-        for i in degrees:
+        for i in vertices:
             visited[i] = False
         #print("Visited: ", visited)
         
@@ -238,11 +242,10 @@ class Graph:
                     visited[i] = True
                 if visited[i] == True and i == final:
                     return queue
-    def dfs_function(self, initial, final, visited):
+    def dfs_function(self, idgraph, initial, final, visited):
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
-        degrees = self.__graph[10]["vertices"]
-        edges = self.__graph[10]["edges"]
+        edges = self.__graph[idgraph]["edges"]
 
 
         dici_edges = defaultdict(list)
@@ -250,15 +253,14 @@ class Graph:
             dici_edges[i[0]].append(i[1])
 
         visited.add(initial)
-        print(initial, end=" ")
         
-        for teste in dici_edges[initial]:
-            if teste not in visited:
+        for de in dici_edges[initial]:
+            if de not in visited:
                
-                self.dfs_function(teste, final, visited)
-            if teste == final:
+                self.dfs_function(idgraph, de, final, visited)
+            if de == final:
                 break
-    def dfs(self, initial, final):
+    def dfs(self, idgraph, initial, final):
         visited = set()
-        self.dfs_function(initial, final, visited)
+        self.dfs_function(idgraph, initial, final, visited)
         return visited  
