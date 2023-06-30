@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+import sys
 import graph as gi
 from lib.menu import menu_inicial
-from lib.statement import Chamada
+from lib.statement import ExecuteGraph
 
 if __name__ == "__main__":
     
@@ -24,31 +25,17 @@ if __name__ == "__main__":
     # Chamada de função que faz a desserialização JSON
    # graph = gi.Graph(f"{data}.json")
 
-    menu_inicial()
     print("\n")
-    op = int(input("Selecione a opção que deseja prosseguir: "))
-    print("\n")
-    execute = Chamada(f"{data}.json")
-    execute.verify_op(op)
-    # print("\n")
-    # multigrafh, pseudograph, completegraph, desconex = graph.graph_check()
-
-    # print(f"É multigrafo: {multigrafh}")
-    # print(f"É pseudografo: {pseudograph}")
-    # print(f"É desconexo: {desconex}")
-    # print(f"É grafo completo: {completegraph}")
-
-    # graus = graph.graus_vertices()
-    # print(f"Grau dos Vértices do id=1: {graus}")
-
-    # a_grau = graph.degree_vertice_input("A")
-    # print(f"Grau do Vértice A do id=1: {a_grau}")
-
-    # vertice_a = graph.reachable_vertices_of_A(1, "A")
-    # print(f"Vértices alcançavéis de A: {vertice_a}")
-    
-    # vertice_ina = graph.vertices_unreachable_of_A(1, "A")
-    # print(f"Vértices inalcançavéis de A: {vertice_ina}")
-    # print(graph.bfs_graph("A", "BV"))
-
-    # print(graph.dfs("A", "H"))
+    execute = ExecuteGraph(f"{data}.json")
+    while True:
+        menu_inicial()
+        print("\n")
+        try:
+            op = int(input("Selecione a opção que deseja prosseguir: "))
+            print("\n")
+            execute.verify_op(op)
+        except KeyboardInterrupt:
+            print("Programa encerrado")
+            sys.exit()
+        except ValueError:
+            print("Digite um valor interiro!")

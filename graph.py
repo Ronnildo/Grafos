@@ -7,7 +7,7 @@ class Graph:
     def __init__(self, json):
         self.__input = json
         self.__graph = {}
-        self.adj_mtx = []
+        
     # Retorna as informações de um grafo específico
     def graph_specific_return(self, parms):
         json_file = gm.JsonToDict(self.__input)
@@ -20,37 +20,24 @@ class Graph:
         json_file = gm.JsonToDict(self.__input)
         self.__graph = json_file.json_to_graph()["graphs"]
         return self.__graph
-    def graph_check(self):
-        json_file = gm.JsonToDict(self.__input)
-        self.__graph = json_file.json_to_graph()["graphs"]
-        mult, pseud, complet, desconex = {}, {}, {}, {}
 
-        for i in range(len(self.__graph)):
-            mult[i+1] = self.is_multigraph(self.__graph[i]["edges"])
-            pseud[i+1] = self.is_pseudograph(self.__graph[i]["edges"])
-            complet[i+1] = self.is_complete_graph(
-                self.__graph[i]["vertices"], self.__graph[i]["edges"])
-            desconex[i+1] = self.is_disconnected_graph(
-                self.__graph[i]["vertices"], self.__graph[i]["edges"])
-        return mult, pseud, complet, desconex
+    # def is_multigraph(self, edges):
+    #     # Criar um dicionário para armazenar as arestas
+    #     edge_dict = {}
 
-    def is_multigraph(self, edges):
-        # Criar um dicionário para armazenar as arestas
-        edge_dict = {}
+    #     # print(self.__graph)
 
-        # print(self.__graph)
+    #     for edge in edges:
+    #         edge_tuple = tuple(sorted(edge))
+    #         if edge_tuple in edge_dict:
+    #             edge_dict[edge_tuple] += 1
+    #         else:
+    #             edge_dict[edge_tuple] = 1
 
-        for edge in edges:
-            edge_tuple = tuple(sorted(edge))
-            if edge_tuple in edge_dict:
-                edge_dict[edge_tuple] += 1
-            else:
-                edge_dict[edge_tuple] = 1
-
-        for i in edge_dict.values():
-            if i > 1:
-                return True
-        return False
+    #     for i in edge_dict.values():
+    #         if i > 1:
+    #             return True
+    #     return False
 
     def is_pseudograph(self, edges):
 
@@ -260,7 +247,7 @@ class Graph:
                 self.dfs_function(idgraph, de, final, visited)
             if de == final:
                 break
-    def dfs(self, idgraph, initial, final):
+    def dfs(self, edges, initial, final):
         visited = set()
-        self.dfs_function(idgraph, initial, final, visited)
+        self.dfs_function(edges, initial, final, visited)
         return visited  
